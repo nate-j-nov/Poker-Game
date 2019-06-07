@@ -1,39 +1,86 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
-
+using System.Collections;
+using System.Text;
 namespace PokerGame
 {
 
-    //public sealed Stack<T> Deck()
-    /*class Card
+    class Program
     {
-        Card(string face, string suit);
-    }*/
-
-    public class Deck
-    {
-        string[] faces = {"Ace", "Two", "Three", "Four", "Five", "Six", "Seven", "Eight",
-            "Nine", "Ten", "Jack", "Queen", "King"};
-        string[] suit = { "Hearts", "Diamonds", "Spades", "Clubs" };
-
-        public Deck()
+        public enum CardFace
         {
-            foreach (string str in suit)
-            {
-                foreach (string k in faces)
-                {
-                    Console.WriteLine(k + " of " + str);
+            Ace = 1,
+            Two,
+            Three,
+            Four,
+            Five,
+            Six,
+            Seven,
+            Eight,
+            Nine,
+            Ten,
+            Jack,
+            Queen,
+            King
+        }
 
+        public enum CardSuit
+        {
+            Clubs = 1, //Specified as one because assigning zero to it may cause
+                       //complications when assigning scores to hands
+            Diamonds,
+            Hearts,
+            Spades
+        }
+        public sealed class Card
+        {
+            public CardFace Face { get; }
+            public CardSuit Suit { get; }
+
+            public Card(CardFace face, CardSuit suit)
+            {
+                Face = face;
+                Suit = suit;
+            }
+
+            public bool IsHigherThan(Card otherCard)
+            {
+                return Face >= otherCard.Face && Suit > otherCard.Suit;
+            }
+        }
+
+
+
+        public sealed class Deck
+        {
+            public Stack<Card> deck = new Stack<Card>();
+
+            public Deck()
+            {
+                foreach (CardSuit s in Enum.GetValues(typeof(CardSuit)))
+                {
+                    foreach (CardFace f in Enum.GetValues(typeof(CardFace)))
+                    {
+                        Card c = new Card(f, s);
+                        Console.WriteLine(c);
+                    }
+                }
+
+            }
+
+            public void PrintDeck()
+            {
+                foreach (Card c in deck)
+                {
+                    Console.WriteLine(c);
                 }
             }
         }
-    }
-   
-    class Program
-    {
+
         static void Main(string[] args)
         {
             Deck d = new Deck();
+            d.PrintDeck();
         }
     }
 }
