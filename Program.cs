@@ -62,7 +62,7 @@ namespace PokerGame
                     foreach (CardFace f in Enum.GetValues(typeof(CardFace)))
                     {
                         Card c = new Card(f, s);
-                        Console.WriteLine(c);
+                        deck.Push(c);
                     }
                 }
 
@@ -74,6 +74,11 @@ namespace PokerGame
                 {
                     Console.WriteLine(c);
                 }
+            }
+            
+            public void DrawCard()
+            { 
+                deck.Pop();
             }
         }
 
