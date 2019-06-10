@@ -34,9 +34,14 @@ namespace PokerGame
        public void Shuffle(Stack<Card> d) 
        {
            Random r = new Random();
-           for(int x = 0; x < d.Count; x++);
-           /*I'm thinking that I want to take a random number (r) between 27 and 52
-           and then take the card[x] and switch it with card[r] */
+
+           for(int x = 0; x < 25; x++)
+           {
+               int k = r.Next(x+1);
+               Card temp = d.ElementAt(r);
+               d.ElementAt(r) = d.ElementAt(x);
+               d.ElementAt(x) = temp;
+           }
        }
     }
 }
