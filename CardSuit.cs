@@ -9,7 +9,6 @@ namespace PokerGame
     {
     Clubs, Diamonds,Hearts, Spades
     }
-
 }
         
 
