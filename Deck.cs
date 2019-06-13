@@ -31,18 +31,29 @@ namespace PokerGame
                Console.WriteLine(v.ToString());
            }
        }
-       public void Shuffle(Stack<Card> d) 
+       public void Shuffle()
        {
-           Random r = new Random();
+            Random r = new Random();
 
-           for(int x = 0; x < 25; x++)
-           {
-               int k = r.Next(x+1);
-               Card temp = d.ElementAt(r);
-               d.ElementAt(r) = d.ElementAt(x);
-               d.ElementAt(x) = temp;
-           }
-       }
+            Card[] arrOfCards = deck.ToArray();
+            deck.Clear();
+            for (int x = arrOfCards.Length - 1; x > 0; --x)
+            {
+                int k = r.Next(x + 1);
+                var temp = arrOfCards[x];
+                arrOfCards[x] = arrOfCards[k];
+                arrOfCards[k] = temp;
+            }
+            foreach (var x in arrOfCards)
+            {
+                deck.Push(x);
+            }
+        }
+
+        public int CountCards()
+        {
+            return deck.Count;
+        }    
     }
 }
 
