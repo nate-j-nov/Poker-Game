@@ -10,8 +10,9 @@ namespace PokerGame
 {   
     public sealed class Deck
     {
-        public Stack<Card> deck = new Stack<Card>();
+        private Stack<Card> deck = new Stack<Card>();
 
+        //create deck
         public Deck()
         {
             foreach (CardSuit s in Enum.GetValues(typeof(CardSuit)))
@@ -23,16 +24,19 @@ namespace PokerGame
                 }
             }
         }
-    
+
+        //creates deck
        public void PrintDeck()
-       {
+        {
            foreach(var v in deck)
-           {
+            {
                Console.WriteLine(v.ToString());
-           }
-       }
-       public void Shuffle()
-       {
+            }
+        }
+
+        //Shuffles deck
+        public void Shuffle()
+        {
             Random r = new Random();
 
             Card[] arrOfCards = deck.ToArray();
@@ -50,10 +54,17 @@ namespace PokerGame
             }
         }
 
+        //Counts cards (For testing purposes, not illicit purposes ;)
         public int CountCards()
         {
             return deck.Count;
-        }    
+        } 
+
+        //draws card from deck
+        public Card DrawCard()
+        {
+            return deck.Pop();
+        }
     }
 }
 
