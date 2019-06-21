@@ -25,7 +25,7 @@ namespace PokerGame
             }
         }
 
-        //creates deck
+        //Prints deck
        public void PrintDeck()
         {
            foreach(var v in deck)
