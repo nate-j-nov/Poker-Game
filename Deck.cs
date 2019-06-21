@@ -54,7 +54,7 @@ namespace PokerGame
             }
         }
 
-        //Counts cards (For testing purposes, not illicit purposes ;)
+        //Counts cards (For testing purposes, not illicit purposes)
         public int CountCards()
         {
             return deck.Count;
