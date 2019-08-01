@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Collections;
 using System.Text;
 using static PokerGame.Card;
-using static PokerGame.Deck;
+using static PokerGame.Dealer;
 
 namespace PokerGame
 {

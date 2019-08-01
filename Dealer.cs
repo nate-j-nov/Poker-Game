@@ -10,11 +10,7 @@ namespace PokerGame
     public sealed class Dealer
     {
         private Stack<Card> deck = new Stack<Card>();
-
-        public Dealer()
-        {
-
-        }
+        public List<Card> CommCards = new List<Card>(); //Declares Community Cards
 
         public void PopulateDeck()
         {
@@ -63,12 +59,11 @@ namespace PokerGame
             return deck.Count;
         }
 
-        public List<Card> DealPlayerCards()
+        public void DealPlayerCards()
         {
             List<Card> playerCards = new List<Card>();
             for (int x = 0; x < 2; x++)
                 playerCards.Add(DrawCard());
-
         }
 
         //draws card from deck
@@ -76,8 +71,55 @@ namespace PokerGame
         {
             return deck.Pop();
         }
+
+        //Draws first three cards of Community Cards
+        public void DrawFlop()
+        {
+            for (int i = 0; i < 3; i++)
+            {
+                CommCards.Add(DrawCard());
+            }
+            PrintCommCards();
+        }
+
+        //Draws fourth community card
+        public void DrawTurn()
+        {
+            if (CommCards.Count == 3)
+            {
+                CommCards.Add(DrawCard());
+                PrintCommCards();
+            }
+            else
+            {
+                Console.WriteLine("Can't do this");
+            }
+        }
+
+        //Draws fifth community card
+        public void DrawRiver()
+        {
+            if (CommCards.Count == 4)
+            {
+                CommCards.Add(DrawCard());
+                PrintCommCards();
+            }
+            else
+            {
+                Console.WriteLine("Can't do this");
+            }
+        }
+
+        //Prints community cards
+        public void PrintCommCards()
+        {
+            foreach (Card e in CommCards)
+                Console.Write("  {0}  ", e.ToString());
+            Console.WriteLine();
+        }
     }
 }
+
 
 
 

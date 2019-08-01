@@ -2,77 +2,39 @@
 using System.Collections.Generic;
 using System.Collections;
 using System.Text;
-using static PokerGame.Deck;
-using static PokerGame.Card;
+using System.Linq;
+using static PokerGame.Decision;
 
 namespace PokerGame
 {
-    public class HumanPlayer
+    public class HumanPlayer : Player
     {
-        public string PlayerName { get; }
-        public double Money = 100; //Amount of money given to a player
-        private Card[] Hand = new Card[2];
-        public double OtherPlyrBet;
-        const double BigBlind = 2.00;
-        const double SmallBlind = 1.00;
-        public double Pot;
-       
-        //HumanPlayer constructor taking string name and deck. 
-        public HumanPlayer(string nm, Deck d)
+        int userChoice;
+        public HumanPlayer(string playerName) : base(playerName)
         {
-            Console.WriteLine();
-            PlayerName = nm;
-            for (int i = 0; i < 2; i++)
-            {
-                Hand[i] = d.DrawCard();
-            }
+
         }
 
-        //Prints money
-        public void PrintMoney()
+        public override Decision PerformTurn()
         {
-            Console.WriteLine("Money: {0:c}", Money);
+            Console.WriteLine("What would you like to do?\n" +
+               "Press: 1 for Fold \n" +
+               "2 for Raise \n" +
+               "3 for Call");
+
+            userChoice = int.Parse(Console.ReadLine());
+            DecisionType decision = (DecisionType)userChoice;
+            return new Decision(decision, 10.24);
         }
 
-        //Prints hand
-        public void PrintHand()
+        public bool VerifyDecision()
         {
-            foreach (var v in Hand)
-                Console.WriteLine(v.ToString());
-        }
-
-        //Match either other players' bet or the big blind. 
-        public void Call()
-        {
-            //code to read in Money on the table
-        }
-
-        //Raises money in the pot
-        public void Raise()
-        {
-            Console.WriteLine($"How much would you like to bet, {PlayerName}?");
-
-            string Entered = Console.ReadLine();
-            double RaiseAmt = Convert.ToDouble(Entered);
-
-            if (RaiseAmt <= Money && RaiseAmt > 0)
-            {
-                Money -= RaiseAmt;
-                Console.WriteLine("You raise {0:c}.", RaiseAmt);
-                Pot += RaiseAmt;
-                PrintMoney();
-            }
+            if (userChoice >= 1 && userChoice <= 3)
+                return true;
             else
-            {
-                Console.WriteLine("You can't afford to bet that, " +
-                    "but you can borrow from the loan shark if you'd like");
-            }
-        }
-
-        //Fold function, return true. If Fold = TRUE, round ends
-        public bool Fold()
-        {
-            return true;
+                return false;
+            
         }
     }
 }
+
