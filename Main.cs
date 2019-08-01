@@ -3,11 +3,13 @@ using System.Collections.Generic;
 using System.Collections;
 using System.Text;
 using static PokerGame.Card;
-using static PokerGame.Deck;
-using static PokerGame.CardFace;
+using static PokerGame.Round;
+using static PokerGame.Dealer;
 using static PokerGame.CardSuit;
+using static PokerGame.CardFace;
 using static PokerGame.HumanPlayer;
-using static PokerGame.CommunityCards;
+
+
 
 namespace PokerGame
 {
@@ -22,14 +24,7 @@ namespace PokerGame
             string name = Console.ReadLine();
             Console.WriteLine($"Welcome, {name}!");
 
-            //Create deck
-            Deck d = new Deck();
-            d.Shuffle();
-
-            //deal all commuity cards. This is a test.
-            CommunityCards cc = new CommunityCards(d);
-            cc.DrawTurn(d);
-            cc.DrawRiver(d);
+            Round round = new Round();
 
         }
     }
