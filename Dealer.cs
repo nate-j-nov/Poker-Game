@@ -5,12 +5,13 @@ using System.Text;
 using System.Linq;
 using static PokerGame.Card;
 using static PokerGame.CardFace;
+using static PokerGame.Player;
+
 namespace PokerGame
 {
     public sealed class Dealer
     {
         private Stack<Card> deck = new Stack<Card>();
-        public List<Card> CommCards = new List<Card>(); //Declares Community Cards
 
         public void PopulateDeck()
         {
@@ -53,69 +54,19 @@ namespace PokerGame
             }
         }
 
-        //Counts cards (For testing purposes, not illicit purposes)
-        public int CountCards()
-        {
-            return deck.Count;
-        }
-
-        public void DealPlayerCards()
-        {
-            List<Card> playerCards = new List<Card>();
-            for (int x = 0; x < 2; x++)
-                playerCards.Add(DrawCard());
-        }
-
-        //draws card from deck
+        //Draws card from deck
         public Card DrawCard()
         {
             return deck.Pop();
         }
 
-        //Draws first three cards of Community Cards
-        public void DrawFlop()
+        //Deals hand to player
+        public void DealPlayerCards(Player player)
         {
-            for (int i = 0; i < 3; i++)
+            for(int x = 0; x < 2; x++)
             {
-                CommCards.Add(DrawCard());
+                player.Hand.Add(DrawCard());
             }
-            PrintCommCards();
-        }
-
-        //Draws fourth community card
-        public void DrawTurn()
-        {
-            if (CommCards.Count == 3)
-            {
-                CommCards.Add(DrawCard());
-                PrintCommCards();
-            }
-            else
-            {
-                Console.WriteLine("Can't do this");
-            }
-        }
-
-        //Draws fifth community card
-        public void DrawRiver()
-        {
-            if (CommCards.Count == 4)
-            {
-                CommCards.Add(DrawCard());
-                PrintCommCards();
-            }
-            else
-            {
-                Console.WriteLine("Can't do this");
-            }
-        }
-
-        //Prints community cards
-        public void PrintCommCards()
-        {
-            foreach (Card e in CommCards)
-                Console.Write("  {0}  ", e.ToString());
-            Console.WriteLine();
         }
     }
 }

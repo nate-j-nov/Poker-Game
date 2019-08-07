@@ -13,10 +13,10 @@ namespace PokerGame
             Call,
         }
 
-        public Decision(DecisionType selDecisionType, double amnt)
+        public Decision(DecisionType selDecisionType)
         {
             SelDecisionType = selDecisionType;
-            Amount = amnt;
+            
         }
     }
 }   

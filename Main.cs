@@ -16,13 +16,8 @@ namespace PokerGame
     class Program
     { 
         static void Main(string[] args)
-        {
-            //Welcome
-            Console.WriteLine("Hello! What's your name?");
-
-            //Get name of human player
-            string name = Console.ReadLine();
-            Console.WriteLine($"Welcome, {name}!");
+        {       
+            Console.WriteLine("Welcome to poker!");
 
             Round round = new Round();
 
