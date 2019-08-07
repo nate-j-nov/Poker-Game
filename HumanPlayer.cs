@@ -22,18 +22,16 @@ namespace PokerGame
                "2 for Raise \n" +
                "3 for Call");
 
-            userChoice = int.Parse(Console.ReadLine());
+            userChoice = int.Parse(Console.ReadLine()); //Get user input
             DecisionType decision = (DecisionType)userChoice;
-            return new Decision(decision, 10.24);
+            return new Decision(decision);
         }
-
-        public bool VerifyDecision()
+        public override bool VerifyDecision()
         {
             if (userChoice >= 1 && userChoice <= 3)
                 return true;
             else
                 return false;
-            
         }
     }
 }
