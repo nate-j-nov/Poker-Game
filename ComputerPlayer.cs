@@ -14,8 +14,24 @@ namespace PokerGame
 
         }
 
+        /// <summary>
+        /// Maybe pass in pot, previous bets/raises
+        /// </summary>
+        /// <returns></returns>
         public override Decision PerformTurn()
         {
+            var myBestHand = Hand.GetBestHand(new List<Card>());
+
+            if(myBestHand == WinningHands.HighCard)
+            {
+                return new Decision(DecisionType.Fold);
+            }
+
+            if(myBestHand == WinningHands.Flush)
+            {
+                return new Decision(DecisionType.Raise);
+            }
+
             int compChoice = 1; //Set to one [fold] as a default for now so my code compiles
             DecisionType decision = (DecisionType)compChoice;
             return new Decision(decision);

@@ -8,7 +8,6 @@ using static PokerGame.Player;
 using static PokerGame.Decision;
 using static PokerGame.PlayerList;
 
-
 namespace PokerGame
 {
     public class Round //Driver
@@ -16,46 +15,48 @@ namespace PokerGame
         public double BetToMatch { get; private set; }
         double RaiseAmount;
         double Pot = 50.00;
-        double Ante = 2.00;
+        private double _ante = 2.00;
         
         Dealer dealer = new Dealer();
         List<Card> CommCards = new List<Card>();
 
-        public Round()
+        public Round(double ante)
         {
-            PlayerList Players = new PlayerList();
-            List<Player> PlayersInGame = Players.CreatePlayerList();
+            _ante = ante;
+        }
 
+        public void RunRound(List<Player> playersInRound)
+        {
             dealer.PopulateDeck();
             dealer.ShuffleDeck();
 
-            PayAntes(PlayersInGame);
+            PayAntes(playersInRound);
 
-            PlayersInGame.ForEach(dealer.DealPlayerCards);
-         
+            playersInRound.ForEach(dealer.DealPlayerCards);
+
             //Draw community cards
-            DrawFlop();
+            DrawCards(3);
 
             //Bet on Community Cards
-            BettingCycle(PlayersInGame);
+            BettingCycle(playersInRound);
 
-            /*dealer.DrawTurn();
-            BettingCycle(PlayerList);
+            DrawCards(1);
+            //BettingCycle(PlayerList);
 
-            dealer.DrawRiver();
-            BettingCycle(PlayerList);*/
+            //dealer.DrawCards(1);
+            //BettingCycle(PlayerList);
 
             //Populate TotalCards, which is part of my idea to determine the winner of each hand
-            foreach (var p in PlayersInGame)
+            foreach (var p in playersInRound)
             {
-                p.PopulateTotalCards(CommCards);
+                p.Hand.GetBestHand(CommCards);
             }
 
             //Print both a players hand and the community card. This is a test.
-            foreach(var p in PlayersInGame)
+            foreach (var p in playersInRound)
             {
                 Console.WriteLine($"{p.PlayerName}'s cards");
-                p.PrintTotalCards();
+                p.PrintHand(CommCards);
                 Console.WriteLine("\n");
             }
 
@@ -145,8 +146,8 @@ namespace PokerGame
         {
             foreach (var p in playerList)
             {
-                p.Money -= Ante;
-                Pot += Ante;
+                p.Money -= _ante;
+                Pot += _ante;
                 Console.WriteLine($"{p.PlayerName} paid their ante");
                 PrintPot();
             }
@@ -164,42 +165,13 @@ namespace PokerGame
             }
         }
 
-        //Draws first three cards of Community Cards
-        public void DrawFlop()
+        public void DrawCards(int numCards)
         {
-            for (int i = 0; i < 3; i++)
+            for(int i=0 ; i < numCards; i++)
             {
                 CommCards.Add(dealer.DrawCard());
             }
             PrintCommCards();
-        }
-
-        //Draws fourth community card
-        public void DrawTurn()
-        {
-            if (CommCards.Count == 3)
-            {
-                CommCards.Add(dealer.DrawCard());
-                PrintCommCards();
-            }
-            else
-            {
-                Console.WriteLine("Can't do this");
-            }
-        }
-
-        //Draws fifth community card
-        public void DrawRiver()
-        {
-            if (CommCards.Count == 4)
-            {
-                CommCards.Add(dealer.DrawCard());
-                PrintCommCards();
-            }
-            else
-            {
-                Console.WriteLine("Can't do this");
-            }
         }
 
         //Prints Community Cards

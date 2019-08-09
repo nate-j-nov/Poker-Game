@@ -10,18 +10,12 @@ using PokerGame;
 
 namespace PokerGame
 {
-
     public abstract class Player
     {
         public string PlayerName; // equivalent to { get; set; }
         public double Money = 100; //Amount of money given to a player at beginning
-        public List<Card> Hand = new List<Card>();
+        public PokerHand Hand = new PokerHand();
         //public int BlindPosition; <- irrelevant
-
-        /*List of cards that are in the players hand or in the pocket community
-         cards. This is part of my idea of how to determine the winning hands of each
-         player. Ex: Royal Flush, straight, three of a kind etc.*/
-        private List<Card> TotalCards = new List<Card>(); 
 
         public Player(string playerName)
         {
@@ -35,10 +29,13 @@ namespace PokerGame
         }
 
         //Prints player's hand
-        public void PrintHand()
+        public void PrintHand(IEnumerable<Card> commCards)
         {
             foreach (Card h in Hand)
-                Console.WriteLine(h.ToString());
+                Console.WriteLine(h);
+
+            foreach (var c in commCards)
+                Console.WriteLine(c);
         }
        
         //Verify's input from the player. 
@@ -47,29 +44,19 @@ namespace PokerGame
 
         public abstract Decision PerformTurn();
 
-        //Method to fill TotalCards, which is a list of cards that is used to
-        //read the hands and community cards to determine the winner
-        public void PopulateTotalCards(List<Card> commCards)
-        {
-            foreach (var h in Hand)
-                TotalCards.Add(h);
-
-            foreach (var c in commCards)
-                TotalCards.Add(c);
-        }
-
         //Print TotalCards in the player's hand and what's in the community cards.
         //Used for testing purposes
-        public void PrintTotalCards()
+        public void PrintTotalCards(IEnumerable<Card> communityCards)
         {
-            foreach (var t in TotalCards)
+            foreach (var h in Hand)
             {
-                Console.WriteLine(t.ToString());
+                Console.WriteLine(h);
+            }
+
+            foreach(var c in communityCards)
+            {
+                Console.WriteLine(c);
             }
         }
     }
 }
-
-
-
-   
