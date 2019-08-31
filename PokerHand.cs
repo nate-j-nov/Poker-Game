@@ -29,13 +29,13 @@ namespace PokerGame
             }
             else if (HasFlush(handCards))
             {
-                if (HasStraightFlush(handCards)
-                {
-                    return WinningHands.StraightFlush;
-                }
-                else if (HasRoyalFlush(handCards))
+                if (HasRoyalFlush(handCards)
                 {
                     return WinningHands.RoyalFlush;
+                }
+                else if (HasStraightFlush(handCards))
+                {
+                    return WinningHands.StraightFlush;
                 }
                 else
                 {
