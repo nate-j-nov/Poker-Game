@@ -2,7 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
-using static PokerGame.Player;
+
 
 namespace PokerGame
 {
@@ -14,7 +14,11 @@ namespace PokerGame
         {
             var handCards = _cards.ToList();
             handCards.AddRange(communityCards);
-            
+
+            if (HasPair(handCards))
+            {
+                return WinningHands.Pair;
+            }
             if (HasTwoPairs(handCards))
             {
                 return WinningHands.TwoPair;
@@ -29,7 +33,7 @@ namespace PokerGame
             }
             else if (HasFlush(handCards))
             {
-                if (HasRoyalFlush(handCards))
+                /*if (HasRoyalFlush(handCards))
                 {
                     return WinningHands.RoyalFlush;
                 }
@@ -38,9 +42,9 @@ namespace PokerGame
                     return WinningHands.StraightFlush;
                 }
                 else
-                {
+                {*/
                     return WinningHands.Flush;
-                }
+                //}
             }
             else if (HasFullHouse(handCards))
             {
