@@ -14,7 +14,7 @@ namespace PokerGame
     {
         public double BetToMatch { get; private set; }
         double RaiseAmount;
-        double Pot = 50.00;
+        double Pot;
         private double _ante = 2.00;
         
         Dealer dealer = new Dealer();
@@ -29,11 +29,11 @@ namespace PokerGame
         {
             dealer.PopulateDeck();
             dealer.ShuffleDeck();
-
+            dealer.PrintDeck();
             PayAntes(playersInRound);
 
             playersInRound.ForEach(dealer.DealPlayerCards);
-
+            
             //Draw community cards
             DrawCards(3);
 
@@ -41,15 +41,19 @@ namespace PokerGame
             BettingCycle(playersInRound);
 
             DrawCards(1);
-            //BettingCycle(PlayerList);
 
-            //dealer.DrawCards(1);
-            //BettingCycle(PlayerList);
-
+            DrawCards(1);
+            
             //Populate TotalCards, which is part of my idea to determine the winner of each hand
             foreach (var p in playersInRound)
             {
                 p.Hand.GetBestHand(CommCards);
+            }
+
+            foreach(var p in playersInRound)
+            {
+                if(p.Hand.HasPair(CommCards))
+                    Console.WriteLine($"{p.PlayerName} has a pair");
             }
 
             //Print both a players hand and the community card. This is a test.
@@ -181,7 +185,5 @@ namespace PokerGame
                 Console.Write("  {0}  ", e.ToString());
             Console.WriteLine();
         }
-
-
     }
 }

@@ -9,6 +9,7 @@ using static PokerGame.CardSuit;
 using static PokerGame.CardFace;
 using static PokerGame.HumanPlayer;
 using PokerGame.Extensions;
+using static PokerGame.Game;
 
 namespace PokerGame
 {
@@ -27,16 +28,7 @@ namespace PokerGame
             };
 
             var game = new Game(playersInGame);
-
-            var someStack = new Stack<int>();
-            someStack.Push(1);
-            someStack.Push(1);
-            someStack.Push(1);
-            someStack.Push(1);
-            someStack.Push(1);
-            someStack.Push(1);
-
-            someStack.ForEach(item => Console.WriteLine(item));
+            game.NextRound(2.0);
         }
     }
 }

@@ -20,6 +20,7 @@ namespace PokerGame
         /// <returns></returns>
         public override Decision PerformTurn()
         {
+
             var myBestHand = Hand.GetBestHand(new List<Card>());
 
             if(myBestHand == WinningHands.HighCard)
@@ -30,6 +31,7 @@ namespace PokerGame
             if(myBestHand == WinningHands.Flush)
             {
                 return new Decision(DecisionType.Raise);
+                //need to spit out a raise amount.
             }
 
             int compChoice = 1; //Set to one [fold] as a default for now so my code compiles
