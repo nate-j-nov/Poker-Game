@@ -7,16 +7,15 @@ using static PokerGame.HumanPlayer;
 using static PokerGame.Player;
 using static PokerGame.Decision;
 using static PokerGame.PlayerList;
+using static PokerGame.PokerHand;
 
 namespace PokerGame
 {
     public class Round //Driver
     {
-        public double BetToMatch { get; private set; }
-        double RaiseAmount;
-        double Pot;
         private double _ante = 2.00;
-        
+        public double BetToMatch { get; private set; }
+        double Pot;
         Dealer dealer = new Dealer();
         List<Card> CommCards = new List<Card>();
 
@@ -29,34 +28,33 @@ namespace PokerGame
         {
             dealer.PopulateDeck();
             dealer.ShuffleDeck();
-            dealer.PrintDeck();
             PayAntes(playersInRound);
+            BetToMatch = _ante;
 
-            playersInRound.ForEach(dealer.DealPlayerCards);
+            foreach(var p in playersInRound)
+            {
+                dealer.DealPlayerCards(p);
+            }
             
             //Draw community cards
             DrawCards(3);
 
             //Bet on Community Cards
+            
+
+            DrawCards(1);
+
+            DrawCards(1);
+
             BettingCycle(playersInRound);
 
-            DrawCards(1);
-
-            DrawCards(1);
-            
             //Populate TotalCards, which is part of my idea to determine the winner of each hand
-            foreach (var p in playersInRound)
-            {
-                p.Hand.GetBestHand(CommCards);
-            }
-
+            
             foreach(var p in playersInRound)
             {
-                if(p.Hand.HasPair(CommCards))
-                    Console.WriteLine($"{p.PlayerName} has a pair");
+                Console.WriteLine($"{p.PlayerName} has {p.Hand.GetBestHand(CommCards).ToString()}.");
             }
 
-            //Print both a players hand and the community card. This is a test.
             foreach (var p in playersInRound)
             {
                 Console.WriteLine($"{p.PlayerName}'s cards");
@@ -84,10 +82,9 @@ namespace PokerGame
                         Console.WriteLine($"{player.PlayerName} folded.");
                         break;
                     case DecisionType.Raise:
-                        Console.WriteLine("How much you you like to bet?");
-                        RaiseAmount = Double.Parse(Console.ReadLine());
-                        Raise(player, RaiseAmount);
-                        Console.WriteLine($"{player.PlayerName} raised {RaiseAmount:c}.");
+                        Console.WriteLine("How much would you like to bet?");
+                        Raise(player);
+                        Console.WriteLine($"{player.PlayerName} raised {player.raiseAmount:c}.");
                         break;
                 }
             } while (!player.VerifyDecision());
@@ -100,13 +97,17 @@ namespace PokerGame
         }
 
         //Raises money in the pot
-        void Raise(Player player, double raiseAmt)
+        void Raise(Player player)
         {
-            if (raiseAmt <= player.Money && raiseAmt > 0)
+            if (player is HumanPlayer)
             {
-                player.Money -= (raiseAmt + BetToMatch);
-                Pot += raiseAmt;
-                BetToMatch += RaiseAmount;
+                player.raiseAmount = Double.Parse(Console.ReadLine());
+            }
+            if (player.raiseAmount <= player.Money && player.raiseAmount > 0)
+            {
+                player.Money -= (player.raiseAmount + BetToMatch);
+                Pot += player.raiseAmount;
+                BetToMatch = player.raiseAmount;
             }
             else
             {
@@ -134,18 +135,6 @@ namespace PokerGame
                 return false;
         }
 
-        /*void PayBigBlind(Player player)
-        {
-            
-        }*/
-
-        /*void PaySmallBlind(Player player)
-        {
-            player.Money -= SmallBlind;
-            Pot += BigBlind;
-        }*/
-
-        //Method for each player to pay ante prior to betting
         void PayAntes(List<Player> playerList)
         {
             foreach (var p in playerList)
@@ -162,6 +151,11 @@ namespace PokerGame
         {
             foreach (Player p in playerList)
             {
+                if (p is HumanPlayer)
+                {
+                    Console.WriteLine("Human Player's Hand:");
+                    p.PrintTotalCards(CommCards);
+                }
                 ExecuteTurn(p);
                 p.PrintMoney();
                 PrintPot();

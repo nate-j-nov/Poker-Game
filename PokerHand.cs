@@ -2,87 +2,83 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
-
+using static PokerGame.Player;
 
 namespace PokerGame
 {
     public class PokerHand : List<Card>
     {
         private List<Card> _cards = new List<Card>();
-
+      
+        public PokerHand()
+        {
+            
+        }
+        
         public WinningHands GetBestHand(IEnumerable<Card> communityCards)
         {
-            var handCards = _cards.ToList();
-            handCards.AddRange(communityCards);
-
-            if (HasPair(handCards))
+            var handCards = _cards;
+            handCards.AddRange(communityCards.ToList());
+           
+            if (HasRoyalFlush(handCards))
             {
-                return WinningHands.Pair;
+                return WinningHands.RoyalFlush;            
             }
-            if (HasTwoPairs(handCards))
+            else if (HasStraightFlush(handCards))
             {
-                return WinningHands.TwoPair;
-            }
-            else if (HasTrips(handCards))
-            {
-                return WinningHands.ThreeOfAKind;
-            }
-            else if (HasStraight(handCards))
-            {
-                return WinningHands.Straight;
-            }
-            else if (HasFlush(handCards))
-            {
-                /*if (HasRoyalFlush(handCards))
-                {
-                    return WinningHands.RoyalFlush;
-                }
-                else if (HasStraightFlush(handCards))
-                {
-                    return WinningHands.StraightFlush;
-                }
-                else
-                {*/
-                    return WinningHands.Flush;
-                //}
-            }
-            else if (HasFullHouse(handCards))
-            {
-                return WinningHands.FullHouse;
+                return WinningHands.StraightFlush;
             }
             else if (HasFourOfAKind(handCards))
             {
                 return WinningHands.FourOfAKind;
             }
-            else if (HasStraightFlush(handCards))
+            else if (HasFullHouse(handCards))
             {
-                return WinningHands.FourOfAKind;
+                return WinningHands.FullHouse;
             }
-            else if (HasRoyalFlush(handCards))
+            else if (HasFlush(handCards))
             {
-                return WinningHands.RoyalFlush;
+                return WinningHands.FullHouse;
+            }
+            else if (HasStraight(handCards))
+            { 
+                return WinningHands.Straight;
+            }
+            else if (HasTrips(handCards))
+            { 
+                return WinningHands.ThreeOfAKind;
+            }
+            else if (HasTwoPairs(handCards))
+            { 
+                return WinningHands.TwoPair;
+            }
+            else if (HasPair(handCards))
+            {
+                return WinningHands.Pair;
             }
             else
-            {
+            { 
                 return WinningHands.HighCard;
             }            
         }
-       
+
+
         public bool HasPair(IEnumerable<Card> _handCards)
         {
             return _handCards.GroupBy(card => card.Face).Count(group => group.Count() == 2) == 1;
         }
 
+
         public bool HasTwoPairs(IEnumerable<Card> _handCards)
         {
-            return _handCards.GroupBy(card => card.Face).Count(group => group.Count() == 2) == 2;
+            return _handCards.GroupBy(card => card.Face).Count(group => group.Count() >= 2) >= 2;
         }
 
         public bool HasTrips(IEnumerable<Card> _handCards)
         {
-            return _handCards.GroupBy(card => card.Face).Count(group => group.Count() == 3) == 1;
+            return _handCards.GroupBy(card => card.Face).Count(group => group.Count() == 3) >= 1;
         }
-        //For some reason it's saying it can't convert from IEnumerable 
+
         public bool HasStraight(IEnumerable<Card> _handCards)
         {
             List<Card> orderedCards = _handCards.OrderByDescending(card => card.Face).ToList();
@@ -105,15 +101,13 @@ namespace PokerGame
         }
 
         public bool IsHighStraight(IEnumerable<Card> _orderedCards)
-        {
-            //_orderedCards = _orderedCards.ToList();
-            return _orderedCards.Where(card => card.Face == CardFace.Ace || card.Face == CardFace.King || card.Face == CardFace.Queen || card.Face == CardFace.Jack || card.Face == CardFace.Ten).Count() >= 5;
+        {        
+            return _orderedCards.Where(card => card.Face == CardFace.Ace && card.Face == CardFace.King && card.Face == CardFace.Queen && card.Face == CardFace.Jack && card.Face == CardFace.Ten).Count() >= 5;
         }
 
         public bool IsLowStraight(IEnumerable<Card> _orderedCards)
         {
-            //_orderedCards = _orderedCards.ToList();
-            return _orderedCards.Where(card => card.Face == CardFace.Ace || card.Face == CardFace.Two || card.Face == CardFace.Three|| card.Face == CardFace.Four || card.Face == CardFace.Five).Count() >= 5;
+            return _orderedCards.Where(card => card.Face == CardFace.Ace && card.Face == CardFace.Two && card.Face == CardFace.Three && card.Face == CardFace.Four && card.Face == CardFace.Five).Count() >= 5;
         }
 
         public bool HasFlush(IEnumerable<Card> _handCards)
