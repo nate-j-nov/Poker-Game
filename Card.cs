@@ -1,9 +1,4 @@
-using System;
-using System.Collections.Generic;
-using System.Collections;
-using System.Text;
-using static PokerGame.CardFace;
-using static PokerGame.CardSuit;
+using PokerGame.Enums;
 
 namespace PokerGame
 {

@@ -1,10 +1,7 @@
-﻿using System;
+﻿using PokerGame.Enums;
+using System;
 using System.Collections.Generic;
-using System.Collections;
-using System.Text;
 using System.Linq;
-using static PokerGame.Decision;
-using static PokerGame.PokerHand;
 
 namespace PokerGame
 {
@@ -25,7 +22,7 @@ namespace PokerGame
         private int GetDecisionNumber(out double _raiseAmount)
         {
             //double raiseAmount; 
-            var myBestHand = Hand.GetBestHand(new List<Card>());
+            var myBestHand = GetBestHand(new List<Card>());
             Random random = new Random();
             var randomDouble = random.NextDouble();
             switch (myBestHand)

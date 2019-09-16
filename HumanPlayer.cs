@@ -1,9 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Collections;
-using System.Text;
-using System.Linq;
-using static PokerGame.Decision;
+﻿using PokerGame.Enums;
+using System;
 
 namespace PokerGame
 {

@@ -1,11 +1,6 @@
-﻿using System;
+﻿using PokerGame.Enums;
+using System;
 using System.Collections.Generic;
-using System.Collections;
-using System.Text;
-using System.Linq;
-using static PokerGame.Card;
-using static PokerGame.CardFace;
-using static PokerGame.Player;
 
 namespace PokerGame
 {
@@ -66,7 +61,6 @@ namespace PokerGame
             for(int x = 0; x < 2; x++)
             {
                 player.Hand.Add(DrawCard());
-                player.Hand.Cards = player.Hand;
             }
         }
     }
