@@ -66,6 +66,7 @@ namespace PokerGame
             for(int x = 0; x < 2; x++)
             {
                 player.Hand.Add(DrawCard());
+                player.Hand.Cards = player.Hand;
             }
         }
     }

@@ -61,6 +61,10 @@ namespace PokerGame
                 p.PrintHand(CommCards);
                 Console.WriteLine("\n");
             }
+            foreach(var cc in CommCards)
+            {
+                Console.WriteLine(cc.ToString());
+            }
 
             PrintPot();
             //decision.GetType();

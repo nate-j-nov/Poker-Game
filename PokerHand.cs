@@ -9,16 +9,13 @@ namespace PokerGame
     public class PokerHand : List<Card>
     {
         private List<Card> _cards = new List<Card>();
-      
-        public PokerHand()
-        {
-            
-        }
+        public List<Card> Cards { get; set; }
         
         public WinningHands GetBestHand(IEnumerable<Card> communityCards)
         {
+            _cards = Cards;
             var handCards = _cards;
-            handCards.AddRange(communityCards.ToList());
+            handCards.AddRange(communityCards);
            
             if (HasRoyalFlush(handCards))
             {
@@ -38,7 +35,7 @@ namespace PokerGame
             }
             else if (HasFlush(handCards))
             {
-                return WinningHands.FullHouse;
+                return WinningHands.Flush;
             }
             else if (HasStraight(handCards))
             { 
@@ -82,7 +79,7 @@ namespace PokerGame
         public bool HasStraight(IEnumerable<Card> _handCards)
         {
             List<Card> orderedCards = _handCards.OrderByDescending(card => card.Face).ToList();
-            for (var x = 0; x < orderedCards.Count - 5; x++)
+            for (var x = 0; x < orderedCards.Count - 4; x++)
             {
                 var skipped = orderedCards.Skip(x);
                 var possibleStraight = skipped.Take(5);
@@ -92,22 +89,20 @@ namespace PokerGame
             return false;
         }
         
-        public bool IsStraight(List<Card> _orderedCards)
+        public bool IsStraight(List<Card> orderedCards)
         {
             //Counts doubles
-            bool doubles = _orderedCards.GroupBy(card => card.Face).Count(group => group.Count() > 1) >= 1;
-            var inARow = _orderedCards[4].Face - _orderedCards[0].Face == 4;
-            return !doubles && inARow;
+            return orderedCards.GroupBy(card => card.Face).Count() == orderedCards.Count() && orderedCards.Max(card => (int)card.Face) - orderedCards.Min(card => (int)card.Face) == 4;
         }
 
-        public bool IsHighStraight(IEnumerable<Card> _orderedCards)
+        public bool IsHighStraight(IEnumerable<Card> orderedCards)
         {        
-            return _orderedCards.Where(card => card.Face == CardFace.Ace && card.Face == CardFace.King && card.Face == CardFace.Queen && card.Face == CardFace.Jack && card.Face == CardFace.Ten).Count() >= 5;
+            return orderedCards.Where(card => card.Face == CardFace.Ace && card.Face == CardFace.King && card.Face == CardFace.Queen && card.Face == CardFace.Jack && card.Face == CardFace.Ten).Count() >= 5;
         }
 
-        public bool IsLowStraight(IEnumerable<Card> _orderedCards)
+        public bool IsLowStraight(IEnumerable<Card> orderedCards)
         {
-            return _orderedCards.Where(card => card.Face == CardFace.Ace && card.Face == CardFace.Two && card.Face == CardFace.Three && card.Face == CardFace.Four && card.Face == CardFace.Five).Count() >= 5;
+            return orderedCards.Where(card => card.Face == CardFace.Ace && card.Face == CardFace.Five && card.Face == CardFace.Four && card.Face == CardFace.Three && card.Face == CardFace.Two).Count() >= 5;
         }
 
         public bool HasFlush(IEnumerable<Card> _handCards)

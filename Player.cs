@@ -34,13 +34,11 @@ namespace PokerGame
         public void PrintHand(IEnumerable<Card> commCards)
         {
             var sortedHand = Hand.ToList();
-            sortedHand.AddRange(commCards.ToList());
             sortedHand = sortedHand.OrderByDescending(card => card.Face).ToList();
             foreach(var c in sortedHand)
             {
                 Console.WriteLine(c.ToString());
-            }
-            
+            }         
         }
        
         //Verify's input from the player. 
