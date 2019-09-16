@@ -4,6 +4,7 @@ using System.Collections;
 using System.Text;
 using System.Linq;
 using static PokerGame.Decision;
+using static PokerGame.PokerHand;
 
 namespace PokerGame
 {
@@ -13,44 +14,66 @@ namespace PokerGame
         {
 
         }
-
-        /// <summary>
-        /// Maybe pass in pot, previous bets/raises
-        /// </summary>
-        /// <returns></returns>
         public override Decision PerformTurn()
         {
-            var myBestHand = Hand.GetBestHand(new List<Card>());
-
-            if(myBestHand == WinningHands.HighCard)
-            {
-                return new Decision(DecisionType.Fold);
-            }
-
-            if(myBestHand == WinningHands.Flush)
-            {
-                return new Decision(DecisionType.Raise);
-            }
-
-            int compChoice = 1; //Set to one [fold] as a default for now so my code compiles
-            DecisionType decision = (DecisionType)compChoice;
-            return new Decision(decision);
+            var compChoice = GetDecisionNumber(out double _raiseAmount);
+            raiseAmount = _raiseAmount;
+            DecisionType compDecicisionType = (DecisionType)compChoice;
+            return new Decision(compDecicisionType);
         }
 
-        /*public int DecideToFold(List<Card> hand)
+        private int GetDecisionNumber(out double _raiseAmount)
         {
-            foreach(Card c in hand)
+            //double raiseAmount; 
+            var myBestHand = Hand.GetBestHand(new List<Card>());
+            Random random = new Random();
+            var randomDouble = random.NextDouble();
+            switch (myBestHand)
             {
-                if (c.Face <= CardFace.Four)
-                {
+                case WinningHands.HighCard:
+                    if (Hand.Max(card => card.Face) <= CardFace.Ten)
+                    {
+                        _raiseAmount = 0;
+                        return 1;
+                    }
+                    else
+                    {
+                        _raiseAmount = 0;
+                        return 2;
+                    }
+
+                case WinningHands.Pair:
+                    var pairs = Hand
+                        .GroupBy(card => card.Face)
+                        .Where(group => group.Count() == 2)
+                        .SelectMany(group => group.Skip(1))
+                        .Max(card => card.Face);
+                        
+                    if (pairs > CardFace.Ten)
+                    {
+                        _raiseAmount = .1 * Money;
+                        return 3;
+                    }
+                    else
+                    {
+                        _raiseAmount = 0;
+                        return 2;
+                    }
+
+                case WinningHands.TwoPair:
+                    _raiseAmount = 0.2 * Money;
+                    return 3;
+
+                case WinningHands.ThreeOfAKind:
+                    _raiseAmount = 0.3 * Money;
+                    return 3;
+                
+
+                default:
+                    _raiseAmount = 0;
                     return 1;
-                }
-                else
-                {
-                    return 0;
-                }
             }
-        }*/
+        }
 
         public override bool VerifyDecision()
         {

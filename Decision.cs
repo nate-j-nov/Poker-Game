@@ -9,14 +9,13 @@ namespace PokerGame
         public enum DecisionType
         {
             Fold = 1,
-            Raise,
             Call,
+            Raise
         }
 
         public Decision(DecisionType selDecisionType)
         {
-            SelDecisionType = selDecisionType;
-            
+            SelDecisionType = selDecisionType;            
         }
     }
 }   

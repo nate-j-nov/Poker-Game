@@ -1,12 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections;
+using System.Linq;
 using System.Text;
 using static PokerGame.Dealer;
 using static PokerGame.Card;
 using static PokerGame.Round;
 using static PokerGame.Decision;
-using PokerGame;
+using static PokerGame.PokerHand;
 
 namespace PokerGame
 {
@@ -15,6 +16,7 @@ namespace PokerGame
         public string PlayerName; // equivalent to { get; set; }
         public double Money = 100; //Amount of money given to a player at beginning
         public PokerHand Hand = new PokerHand();
+        public double raiseAmount;
         //public int BlindPosition; <- irrelevant
 
         public Player(string playerName)
@@ -31,11 +33,12 @@ namespace PokerGame
         //Prints player's hand
         public void PrintHand(IEnumerable<Card> commCards)
         {
-            foreach (Card h in Hand)
-                Console.WriteLine(h);
-
-            foreach (var c in commCards)
-                Console.WriteLine(c);
+            var sortedHand = Hand.ToList();
+            sortedHand = sortedHand.OrderByDescending(card => card.Face).ToList();
+            foreach(var c in sortedHand)
+            {
+                Console.WriteLine(c.ToString());
+            }         
         }
        
         //Verify's input from the player. 

@@ -19,8 +19,8 @@ namespace PokerGame
         {
             Console.WriteLine("What would you like to do?\n" +
                "Press: 1 for Fold \n" +
-               "2 for Raise \n" +
-               "3 for Call");
+               "2 for Call\n" +
+               "3 for Raise");
 
             userChoice = int.Parse(Console.ReadLine()); //Get user input
             DecisionType decision = (DecisionType)userChoice;
