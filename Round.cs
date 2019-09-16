@@ -1,13 +1,6 @@
-﻿using System;
-using System.Collections;
+﻿using PokerGame.Enums;
+using System;
 using System.Collections.Generic;
-using System.Linq;
-using static PokerGame.Dealer;
-using static PokerGame.HumanPlayer;
-using static PokerGame.Player;
-using static PokerGame.Decision;
-using static PokerGame.PlayerList;
-using static PokerGame.PokerHand;
 
 namespace PokerGame
 {
@@ -24,6 +17,8 @@ namespace PokerGame
             _ante = ante;
         }
 
+        //  I think this and other objects like 'Game' and 'Round' should just be managed and run from the Dealer class.  
+        //  Makes sense to me from a modeling standpoint if we are tyring to model the nuances of an actual game - dealer runs everything.
         public void RunRound(List<Player> playersInRound)
         {
             dealer.PopulateDeck();
@@ -35,7 +30,7 @@ namespace PokerGame
             {
                 dealer.DealPlayerCards(p);
             }
-            
+
             //Draw community cards
             DrawCards(3);
 
@@ -52,7 +47,7 @@ namespace PokerGame
             
             foreach(var p in playersInRound)
             {
-                Console.WriteLine($"{p.PlayerName} has {p.Hand.GetBestHand(CommCards).ToString()}.");
+                Console.WriteLine($"{p.PlayerName} has {p.GetBestHand(CommCards).ToString()}.");
             }
 
             foreach (var p in playersInRound)
@@ -159,6 +154,7 @@ namespace PokerGame
                 {
                     Console.WriteLine("Human Player's Hand:");
                     p.PrintTotalCards(CommCards);
+                    Console.WriteLine(Environment.NewLine + "Player " + p.PlayerName + " has a " + p.GetBestHand(CommCards) + Environment.NewLine);
                 }
                 ExecuteTurn(p);
                 p.PrintMoney();

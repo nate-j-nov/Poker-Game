@@ -1,9 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using static PokerGame.Player;
-using static PokerGame.HumanPlayer;
-using System.Collections;
 
 namespace PokerGame
 {
@@ -25,10 +21,6 @@ namespace PokerGame
             foreach(var h in GamePlayers) 
                 Console.WriteLine(h.PlayerName);
             return GamePlayers;
-        }
-
-        public PlayerList()
-        {
         }
     }
 }
