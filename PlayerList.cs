@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
+using PokerGame.Extensions;
 
 namespace PokerGame
 {

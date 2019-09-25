@@ -8,11 +8,13 @@ namespace PokerGame
     public abstract class Player
     {
         public string PlayerName { get; }
-        public double Money = 100; //Amount of money given to a player at beginning
-        public List<Card> Hand { get; }
-        public double raiseAmount;
-        //public int BlindPosition; <- irrelevant
-
+        public double Money = 102; //Amount of money given to a player at beginning
+        public List<Card> Hand { get; set; }
+        public double raiseAmount { get; set; }
+        public static List<Card> PlayerCommCards = new List<Card>(); //Copy of the community cards so that everyone can read them. 
+        public static double OtherPlayersBets { get; set; }
+        public WinningHands MyBestHand { get; set; }
+        public CardFace BestWinningFace { get; private set; }
         public Player(string playerName)
         {
             PlayerName = playerName;
@@ -26,19 +28,19 @@ namespace PokerGame
         }
 
         //Prints player's hand
-        public void PrintHand(IEnumerable<Card> commCards)
+        public void PrintSortedHand()
         {
-            var sortedHand = Hand.ToList();
+            var sortedHand = Hand;
             sortedHand = sortedHand.OrderByDescending(card => card.Face).ToList();
-            foreach(var c in sortedHand)
+            foreach (var c in sortedHand)
             {
                 Console.WriteLine(c.ToString());
-            }         
+            }
         }
-       
+
         //Verify's input from the player. 
         //class due to its role in testing ExecuteTurn() found in Round.cs
-        public abstract bool VerifyDecision(); 
+        public abstract bool VerifyDecision();
 
         public abstract Decision PerformTurn();
 
@@ -50,20 +52,19 @@ namespace PokerGame
             {
                 Console.WriteLine(h);
             }
-
-            foreach(var c in communityCards)
+            foreach (var c in communityCards)
             {
                 Console.WriteLine(c);
             }
         }
 
-        public WinningHands GetBestHand(IEnumerable<Card> communityCards = null)
+        public WinningHands GetBestHand()
         {
             var combinedHand = new List<Card>();
             combinedHand.AddRange(Hand);
 
-            if(communityCards != null)
-                combinedHand.AddRange(communityCards);
+            if (PlayerCommCards != null)
+                combinedHand.AddRange(PlayerCommCards);
 
             if (HasRoyalFlush(combinedHand))
             {
@@ -109,6 +110,11 @@ namespace PokerGame
 
         public bool HasPair(IEnumerable<Card> _handCards)
         {
+            BestWinningFace = _handCards.GroupBy(card => card.Face)
+                .Where(group => group.Count() == 2)
+                .SelectMany(group => group.Skip(1))
+                .Max(card => card.Face);
+
             return _handCards.GroupBy(card => card.Face).Count(group => group.Count() == 2) == 1;
         }
 
@@ -175,6 +181,11 @@ namespace PokerGame
         public bool HasRoyalFlush(IEnumerable<Card> _handCards)
         {
             return HasFlush(_handCards) && _handCards.Where(card => card.Face == CardFace.Ace || card.Face == CardFace.King || card.Face == CardFace.Queen || card.Face == CardFace.Jack || card.Face == CardFace.Ten).Count() == 5;
+        }
+
+        public static void SetOtherPlayersBets(double otherBet)
+        {
+            OtherPlayersBets = otherBet;
         }
     }
 }

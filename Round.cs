@@ -1,6 +1,7 @@
 ﻿using PokerGame.Enums;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace PokerGame
 {
@@ -17,7 +18,6 @@ namespace PokerGame
             _ante = ante;
         }
 
-        //  I think this and other objects like 'Game' and 'Round' should just be managed and run from the Dealer class.  
         //  Makes sense to me from a modeling standpoint if we are tyring to model the nuances of an actual game - dealer runs everything.
         public void RunRound(List<Player> playersInRound)
         {
@@ -25,44 +25,23 @@ namespace PokerGame
             dealer.ShuffleDeck();
             PayAntes(playersInRound);
             BetToMatch = _ante;
-
-            foreach(var p in playersInRound)
+            Player.SetOtherPlayersBets(BetToMatch);
+            foreach (var p in playersInRound)
             {
                 dealer.DealPlayerCards(p);
             }
 
             //Draw community cards
-            DrawCards(3);
+            DrawCommunityCards(3);
+            //BettingCycle(playersInRound);
 
-            //Bet on Community Cards
-            
+            DrawCommunityCards(1);
+            //BettingCycle(playersInRound);
 
-            DrawCards(1);
-
-            DrawCards(1);
-
+            DrawCommunityCards(1);
             BettingCycle(playersInRound);
 
-            //Populate TotalCards, which is part of my idea to determine the winner of each hand
-            
-            foreach(var p in playersInRound)
-            {
-                Console.WriteLine($"{p.PlayerName} has {p.GetBestHand(CommCards).ToString()}.");
-            }
-
-            foreach (var p in playersInRound)
-            {
-                Console.WriteLine($"{p.PlayerName}'s cards");
-                p.PrintHand(CommCards);
-                Console.WriteLine("\n");
-            }
-            foreach(var cc in CommCards)
-            {
-                Console.WriteLine(cc.ToString());
-            }
-
-            PrintPot();
-            //decision.GetType();
+            Console.WriteLine($"The winner is {GetWinner(playersInRound).PlayerName}");
         }
 
         void ExecuteTurn(Player player)
@@ -106,7 +85,8 @@ namespace PokerGame
             {
                 player.Money -= (player.raiseAmount + BetToMatch);
                 Pot += player.raiseAmount;
-                BetToMatch = player.raiseAmount;
+                BetToMatch += player.raiseAmount;
+                Player.SetOtherPlayersBets(BetToMatch);
             }
             else
             {
@@ -141,43 +121,57 @@ namespace PokerGame
                 p.Money -= _ante;
                 Pot += _ante;
                 Console.WriteLine($"{p.PlayerName} paid their ante");
-                PrintPot();
             }
         }
 
         //Goes through round of betting for each player in PlayerList
         void BettingCycle(List<Player> playerList)
         {
-            foreach (Player p in playerList)
+            foreach (var p in playerList)
             {
                 if (p is HumanPlayer)
                 {
                     Console.WriteLine("Human Player's Hand:");
                     p.PrintTotalCards(CommCards);
-                    Console.WriteLine(Environment.NewLine + "Player " + p.PlayerName + " has a " + p.GetBestHand(CommCards) + Environment.NewLine);
+                    Console.WriteLine(Environment.NewLine + "Player " + p.PlayerName + " has a " + p.GetBestHand() + Environment.NewLine);
                 }
+                else
+                {
+                    Console.WriteLine($"Computer Player {p.PlayerName}'s Hand:");
+                    p.PrintTotalCards(CommCards);
+                }
+
                 ExecuteTurn(p);
+                Console.WriteLine(Environment.NewLine + "Other Players' Bets: {0:c}", Player.OtherPlayersBets.ToString());
                 p.PrintMoney();
                 PrintPot();
                 Console.ReadLine();
             }
         }
 
-        public void DrawCards(int numCards)
+        public void DrawCommunityCards(int numCards)
         {
-            for(int i=0 ; i < numCards; i++)
+            for (int i = 0; i < numCards; i++)
             {
-                CommCards.Add(dealer.DrawCard());
+                Card tempCard = dealer.DrawCard();
+                CommCards.Add(tempCard);
+                Player.PlayerCommCards.Add(tempCard);
+
             }
             PrintCommCards();
         }
 
-        //Prints Community Cards
+        //Prints Community Card
         public void PrintCommCards()
         {
             foreach (Card e in CommCards)
                 Console.Write("  {0}  ", e.ToString());
             Console.WriteLine();
+        }
+        public Player GetWinner(List<Player> playersInRound)
+        {
+            List<Player> winners = new List<Player>();
+            winners = playersInRound.OrderByDescending(player => player.MyBestHand).GroupBy(player => player.MyBestHand).First(group => group);
         }
     }
 }
