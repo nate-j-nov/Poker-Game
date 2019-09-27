@@ -33,17 +33,20 @@ namespace PokerGame
 
             //Draw community cards
             DrawCommunityCards(3);
-            //BettingCycle(playersInRound);
+            BettingCycle(playersInRound);
+            playersInRound.RemoveAll(player => player.PlayersDecision == DecisionType.Fold);
 
-            DrawCommunityCards(1);
-            //BettingCycle(playersInRound);
 
             DrawCommunityCards(1);
             BettingCycle(playersInRound);
+            playersInRound.RemoveAll(player => player.PlayersDecision == DecisionType.Fold);            
+
+            DrawCommunityCards(1);
+            BettingCycle(playersInRound);
+            playersInRound.RemoveAll(player => player.PlayersDecision == DecisionType.Fold);
 
             Console.WriteLine($"The winner is {GetWinner(playersInRound).PlayerName}");
         }
-
         void ExecuteTurn(Player player)
         {
             do
@@ -170,8 +173,9 @@ namespace PokerGame
         }
         public Player GetWinner(List<Player> playersInRound)
         {
-            List<Player> winners = new List<Player>();
-            winners = playersInRound.OrderByDescending(player => player.MyBestHand).GroupBy(player => player.MyBestHand).First(group => group);
+            //List<Player> winners = new List<Player>();
+            //winners = playersInRound.OrderByDescending(player => player.MyBestHand).GroupBy(player => player.MyBestHand).First(group => group);
+            return playersInRound.OrderByDescending(player => player.MyBestHand).First();
         }
     }
 }

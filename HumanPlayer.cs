@@ -22,6 +22,7 @@ namespace PokerGame
             MyBestHand = GetBestHand();
             userChoice = int.Parse(Console.ReadLine()); //Get user input
             DecisionType decision = (DecisionType)userChoice;
+            PlayersDecision = decision; 
             return new Decision(decision);
         }
 

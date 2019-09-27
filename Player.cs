@@ -15,11 +15,13 @@ namespace PokerGame
         public static double OtherPlayersBets { get; set; }
         public WinningHands MyBestHand { get; set; }
         public CardFace BestWinningFace { get; private set; }
+        public DecisionType PlayersDecision { get; protected set; }
         public Player(string playerName)
         {
             PlayerName = playerName;
             Hand = new List<Card>();
         }
+        
 
         //Prints player's money
         public void PrintMoney()
@@ -110,10 +112,10 @@ namespace PokerGame
 
         public bool HasPair(IEnumerable<Card> _handCards)
         {
-            BestWinningFace = _handCards.GroupBy(card => card.Face)
+            /*BestWinningFace = _handCards.GroupBy(card => card.Face)
                 .Where(group => group.Count() == 2)
                 .SelectMany(group => group.Skip(1))
-                .Max(card => card.Face);
+                .Max(card => card.Face); */
 
             return _handCards.GroupBy(card => card.Face).Count(group => group.Count() == 2) == 1;
         }
