@@ -14,12 +14,15 @@ namespace PokerGame
         public static List<Card> PlayerCommCards = new List<Card>(); //Copy of the community cards so that everyone can read them. 
         public static double OtherPlayersBets { get; set; }
         public WinningHands MyBestHand { get; set; }
-
+        public CardFace BestWinningFace { get; private set; }
+        public DecisionType PlayersDecision { get; protected set; }
         public Player(string playerName)
         {
             PlayerName = playerName;
             Hand = new List<Card>();
         }
+
+        public Player() { }
 
         //Prints player's money
         public void PrintMoney()
@@ -38,6 +41,13 @@ namespace PokerGame
             }
         }
 
+        public void PrintPlayerHand()
+        {
+            foreach(var c in Hand)
+            {
+                Console.WriteLine(c.ToString());
+            }
+        }
         //Verify's input from the player. 
         //class due to its role in testing ExecuteTurn() found in Round.cs
         public abstract bool VerifyDecision();
@@ -68,22 +78,36 @@ namespace PokerGame
 
             if (HasRoyalFlush(combinedHand))
             {
+                BestWinningFace = CardFace.Ace;
                 return WinningHands.RoyalFlush;
             }
             else if (HasStraightFlush(combinedHand))
             {
+                BestWinningFace = CardFace.Ace;
                 return WinningHands.StraightFlush;
             }
             else if (HasFourOfAKind(combinedHand))
             {
+                BestWinningFace = combinedHand.GroupBy(card => card.Face).Where(group => group.Count() == 4)
+                    .SelectMany(group => group).Max(card => card.Face);
+
                 return WinningHands.FourOfAKind;
             }
             else if (HasFullHouse(combinedHand))
             {
+                List<Card> winningFaces = combinedHand.GroupBy(card => card.Face)
+                    .Where(group => group.Count() == 2).SelectMany(group => group).ToList();
+
+                winningFaces.AddRange(combinedHand.GroupBy(card => card.Face)
+                    .Where(group => group.Count() == 3).SelectMany(group => group).ToList());
+
+                BestWinningFace = winningFaces.Max(card => card.Face);
                 return WinningHands.FullHouse;
             }
             else if (HasFlush(combinedHand))
             {
+                BestWinningFace = combinedHand.GroupBy(card => card.Suit).Where(group => group.Count() == 5)
+                    .SelectMany(group => group).Max(card => card.Face);
                 return WinningHands.Flush;
             }
             else if (HasStraight(combinedHand))
@@ -92,15 +116,30 @@ namespace PokerGame
             }
             else if (HasTrips(combinedHand))
             {
+                BestWinningFace = combinedHand.GroupBy(card => card.Face).Where(group => group.Count() == 3)
+                    .SelectMany(group => group).Max(card => card.Face); // Finds the cards that makes up the "three-of-a-kind" and finds the max
+                                                                        // I know that they are all the same, so taking the max may be a bit redundant, but this was the only way to grab one of the faces I could think of.
+                                                                        //Not totally comfortable with LINQ yet.
                 return WinningHands.ThreeOfAKind;
             }
-            else if (HasTwoPairs(combinedHand))
+            else if (HasAtLeastOnePair(combinedHand))
             {
-                return WinningHands.TwoPair;
-            }
-            else if (HasPair(combinedHand))
-            {
-                return WinningHands.Pair;
+                List<Card> pairs = combinedHand.GroupBy(card => card.Face)
+                    .Where(group => group.Count() == 2).SelectMany(group => group).ToList(); // Finds cards that makes up the pairs
+
+                List<CardFace> pairFaces = new List<CardFace>(); // Creates a list of the faces that make up the pairs.
+
+                foreach (var p in pairs)
+                {
+                    pairFaces.Add(p.Face); // Adds the faces to the list of faces that make up the pairs.
+                }
+
+                BestWinningFace = pairFaces.Max(); // Assigns the highest valued face to the BestWinningFace CardFace member
+
+                if (pairs.Count() == 2)
+                    return WinningHands.Pair;
+                else
+                    return WinningHands.TwoPair;
             }
             else
             {
@@ -108,15 +147,14 @@ namespace PokerGame
             }
         }
 
-        public bool HasPair(IEnumerable<Card> _handCards)
+        public bool HasAtLeastOnePair(IEnumerable<Card> _handCards)
         {
-            return _handCards.GroupBy(card => card.Face).Count(group => group.Count() == 2) == 1;
+            return _handCards.GroupBy(card => card.Face).Any(group => group.Count() == 2);
         }
 
-
-        public bool HasTwoPairs(IEnumerable<Card> _handCards)
+        public bool HasPair(IEnumerable<Card> _handCards)
         {
-            return _handCards.GroupBy(card => card.Face).Count(group => group.Count() >= 2) >= 2;
+            return _handCards.GroupBy(card => card.Face).Count(group => group.Count() >= 2) >= 1;
         }
 
         public bool HasTrips(IEnumerable<Card> _handCards)
@@ -130,9 +168,22 @@ namespace PokerGame
             for (var x = 0; x < orderedCards.Count - 4; x++)
             {
                 var skipped = orderedCards.Skip(x);
-                var possibleStraight = skipped.Take(5);
-                if (IsStraight(possibleStraight.ToList()) || IsHighStraight(possibleStraight.ToList()) || IsLowStraight(possibleStraight.ToList()))
+                var possibleStraight = skipped.Take(5).ToList();
+                if(IsStraight(possibleStraight))
+                {
+                    BestWinningFace = possibleStraight.Max(card => card.Face);
                     return true;
+                }
+                else if (IsHighStraight(possibleStraight))
+                {
+                    BestWinningFace = CardFace.Ace;
+                    return true;
+                } 
+                else if (IsLowStraight(possibleStraight))
+                {
+                    BestWinningFace = CardFace.Five;
+                    return true;
+                }
             }
             return false;
         }

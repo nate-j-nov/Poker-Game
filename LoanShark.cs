@@ -4,94 +4,111 @@ namespace PokerGame
 {
     public class LoanShark
     {
-        public string loanAmt;
+        private double _loanAmount;
         const double interestRate = 0.2;
-        public double payment;
+        private double _payment;
         public int time = 0;
-        public string response;
-        public double debt;
+        public string Response;
+        private Loan _loan = new Loan();
 
-        public LoanShark()
-        {
-            Console.WriteLine(@"Would you like to take out a loan?" +
-                @"Press ""Y"" for Yes or ""N"" for no.");
-        }
+        public LoanShark() { }
 
-        public void GetLoan()
+        public void OfferLoan(int roundNumber, HumanPlayer player)
         {
-            Console.WriteLine("How much woudld you like to borrow?");
-            loanAmt = Console.ReadLine();
-            if (double.TryParse(loanAmt, out double x)) 
-                debt = x;
-            else
-                Console.WriteLine("Please type a number");
-        }
-
-        public void OfferLoan()
-        {
-            do {
+            Console.WriteLine("Would you like to take out a loan?" + Environment.NewLine + @"Type ""Y"" for yes and ""N"" for no.");
+            do
+            {
                 GetResponse();
-                if(VerifyResponse() && response.Equals('y')){
-                    AskForAmt();
+                if (Response.Equals("y"))
+                {
+                    GetLoan(roundNumber, player);
                 }
-                    
             } while (!VerifyResponse());
+        }
+        public void GetLoan(int roundNumber, HumanPlayer player)
+        {
+            Console.WriteLine("How much would you like to borrow?");
+            try
+            {
+                double.TryParse(Console.ReadLine(), out double loanAmount);
+                _loanAmount = loanAmount;
+                _loan = new Loan(roundNumber, _loanAmount);
+                player.DebtOutstanding = loanAmount;
+                player.AcceptLoan(_loan);
+                Console.WriteLine($"You received a new loan of {_loanAmount:c}.");
+            }
+            catch
+            {
+                Console.WriteLine("Please type a valid number");
+                GetLoan(roundNumber, player);
+            }
         }
 
         public void GetResponse()
         {
-            response = Console.ReadLine();
-            response = response.ToLower();
+            Response = Console.ReadLine();
+            Response = Response.ToLower().Trim();
         }
 
         public bool VerifyResponse()
         {
-            if (response.Length != 1)
+
+            if (Response.Length != 1)
             {
+                Console.WriteLine("Wrong Length");
                 Console.WriteLine(@"Please type ""Y"" for yes or ""N"" for no");
                 return false;
-            } else if (Convert.ToChar(response) != 'y' || Convert.ToChar(response) != 'n')
+            }
+            else if (!(Response.Equals("y") || Response.Equals("n")))
             {
+                Console.WriteLine("not y or n");
+                Console.WriteLine(Response);
                 Console.WriteLine(@"Please type ""Y"" for yes or ""N"" for no");
                 return false;
-            } else
+            }
+            else
             {
                 return true;
             }
         }
 
-        public void AskForAmt()
+        public void AskForRepayment(HumanPlayer humanPlayer)
         {
-            System.Console.WriteLine("How much would you like to borrow?");
-            loanAmt = Console.ReadLine();
-            if(VerifyLoanAmt())
-                debt = Double.Parse(loanAmt);
-            
+            Console.WriteLine("Would you like to repay your loan?" + Environment.NewLine + @"Type ""Y"" for yes and ""N"" for no.");
+            do
+            {
+                GetResponse();
+            } while (!VerifyResponse());
+
+            if (Response.Equals("y"))
+            {
+                
+                Console.WriteLine("Please enter the amount you'd like to repay.");
+                try 
+                {
+                    double.TryParse(Console.ReadLine(), out double payment);                    
+                    _payment = payment;
+                    _loan.LoanAmount -= _payment;
+                    humanPlayer.MakePayment(_payment);
+                }
+                catch
+                {
+                    Console.WriteLine("Please enter a valid number.");
+                    AskForRepayment(humanPlayer);
+                }
+                if (_loan.LoanAmount < 0.01)
+                {
+                    humanPlayer.PlayerLoan = null;
+                    Console.WriteLine("Your loan was paid off.");
+                }
+                    
+            }
         }
 
-        public bool VerifyLoanAmt()
+        public void MatureLoan(int roundNumber)
         {
-            if(Double.TryParse(loanAmt, out double x))
-                return true;
-            else{
-                Console.WriteLine("Please respond with a valid number.");
-                return false;
-            }  
-        }
-
-
-        public void MatureLoan()
-        {
-            debt = interestRate * (1 + interestRate);
-            time++;
-        }
-
-        public bool InDebt()
-        {
-            if (debt > 0)
-                return true;
-            else
-                return false;
+            if(_loan != null)
+            _loan.MatureLoan(roundNumber);  
         }
     }
 }
